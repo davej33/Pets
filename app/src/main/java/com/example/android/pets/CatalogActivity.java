@@ -69,14 +69,46 @@ public class CatalogActivity extends AppCompatActivity {
         // Create and/or open a database to read from it
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        // Perform this raw SQL query "SELECT * FROM pets"
-        // to get a Cursor that contains all rows from the pets table.
-        Cursor cursor = db.rawQuery("SELECT * FROM " + PetEntry.TABLE_NAME, null);
+        // String[] projection = {PetEntry._ID, PetEntry.COLUMN_PET_NAME};
+        // String selection = PetEntry.COLUMN_PET_GENDER + "=?";
+        // String[] selectionArgs = {String.valueOf(PetEntry.GENDER_MALE)};
+
+        Cursor cursor = db.query(PetEntry.TABLE_NAME, null, null, null, null, null, null);
+
+
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // pets table in the database).
             TextView displayView = (TextView) findViewById(R.id.text_view_pet);
-            displayView.setText("Number of rows in pets database table: " + cursor.getCount());
+            displayView.setText("The table has " + cursor.getCount() + " pets.\n\n");
+
+            int idColumnIndex = cursor.getColumnIndex(PetEntry._ID);
+            int nameColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_NAME);
+            int breedColumn = cursor.getColumnIndex(PetEntry.COLUMN_PET_BREED);
+            int genderColumn = cursor.getColumnIndex(PetEntry.COLUMN_PET_GENDER);
+            int weightColumn = cursor.getColumnIndex(PetEntry.COLUMN_PET_WEIGHT);
+
+            displayView.append("ID" + " - " + "Name" + " - " + "Breed" + " - " + "Gender" + " - " + "Weight\n");
+
+            while(cursor.moveToNext()){
+
+                int currentID = cursor.getInt(idColumnIndex);
+                String name = cursor.getString(nameColumnIndex);
+                String breed = cursor.getString(breedColumn);
+                int gender = cursor.getInt(genderColumn);
+                String genderString = "";
+                if (gender == 0){
+                    genderString = "Unknown";
+                } else if (gender == 1){
+                    genderString = "Male";
+                } else {
+                    genderString = "Female";
+                }
+                int weight = cursor.getInt(weightColumn);
+
+                displayView.append("\n" + currentID + " - " + name + " - " + breed + " - "
+                                    + genderString + " - " + weight + " kg");
+            }
         } finally {
             // Always close the cursor when you're done reading from it. This releases all its
             // resources and makes it invalid.
@@ -97,6 +129,13 @@ public class CatalogActivity extends AppCompatActivity {
         newRowID = db.insert(PetEntry.TABLE_NAME, null, dummyPet);
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayDatabaseInfo();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options from the res/menu/menu_catalog.xml file.
