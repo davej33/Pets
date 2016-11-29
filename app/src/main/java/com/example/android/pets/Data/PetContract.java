@@ -1,5 +1,6 @@
 package com.example.android.pets.data;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -10,6 +11,11 @@ public final class PetContract {
 
     private PetContract() {
     }
+
+    // URI constants
+    public final static String CONTENT_AUTHORITY = "com.example.android.pets";
+    public final static Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String PATH_PETS = "pets";
 
     public static abstract class PetEntry implements BaseColumns {
 
@@ -27,22 +33,10 @@ public final class PetContract {
         public final static int GENDER_MALE = 1;
         public final static int GENDER_FEMALE = 2;
 
-        // constant to create DB entries
-        private static final String TEXT_TYPE = " TEXT";
-        private static final String INT_TYPE = " INTEGER";
-        private static final String COMMA_SEP = ",";
-        /*
-        public static final String SQL_CREATE_ENTRIES =
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        COLUMN_PET_NAME + TEXT_TYPE + COMMA_SEP +
-                        COLUMN_PET_BREED + TEXT_TYPE + COMMA_SEP +
-                        COLUMN_PET_GENDER + INT_TYPE + COMMA_SEP +
-                        COLUMN_PET_WEIGHT + INT_TYPE + " )";
+        // URI constant
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_PETS);
 
-        // constant to drop table
-        public static final String SQL_DELETE_ENTRIES =
-                "DROP TABLE IF EXISTS " + PetEntry.TABLE_NAME;*/
+
 
 
     }
