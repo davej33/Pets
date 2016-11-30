@@ -62,24 +62,30 @@ public class CatalogActivity extends AppCompatActivity {
      * the pets database.
      */
     private void displayDatabaseInfo() {
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-        PetDbHelper mDbHelper = new PetDbHelper(this);
 
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        // String[] projection = {PetEntry._ID, PetEntry.COLUMN_PET_NAME};
+        String[] projection = {
+                PetEntry._ID,
+                PetEntry.COLUMN_PET_NAME,
+                PetEntry.COLUMN_PET_BREED,
+                PetEntry.COLUMN_PET_GENDER,
+                PetEntry.COLUMN_PET_WEIGHT};
         // String selection = PetEntry.COLUMN_PET_GENDER + "=?";
         // String[] selectionArgs = {String.valueOf(PetEntry.GENDER_MALE)};
 
-        Cursor cursor = db.query(PetEntry.TABLE_NAME, null, null, null, null, null, null);
+        // Cursor cursor = db.query(PetEntry.TABLE_NAME, null, null, null, null, null, null);
 
+        Cursor cursor = getContentResolver().query(
+                PetEntry.CONTENT_URI,   // content uri for pets table
+                projection,             // columns to return
+                null,                   // selection criteria
+                null,                   // selection criteria
+                null);                  // sort criteria
 
+        TextView displayView = (TextView) findViewById(R.id.text_view_pet);
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // pets table in the database).
-            TextView displayView = (TextView) findViewById(R.id.text_view_pet);
+
             displayView.setText("The table has " + cursor.getCount() + " pets.\n\n");
 
             int idColumnIndex = cursor.getColumnIndex(PetEntry._ID);
