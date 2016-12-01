@@ -18,7 +18,7 @@ package com.example.android.pets;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -123,7 +123,6 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
     private void insertPet(){
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues dummyPet = new ContentValues();
         dummyPet.put(PetEntry.COLUMN_PET_NAME, "Toto");
@@ -131,8 +130,14 @@ public class CatalogActivity extends AppCompatActivity {
         dummyPet.put(PetEntry.COLUMN_PET_GENDER, PetEntry.GENDER_MALE);
         dummyPet.put(PetEntry.COLUMN_PET_WEIGHT, 7);
 
-        long newRowID;
-        newRowID = db.insert(PetEntry.TABLE_NAME, null, dummyPet);
+        Uri newRowID = getContentResolver().insert(PetEntry.CONTENT_URI, dummyPet);
+
+       /* if(newRowID == null){
+            Toast.makeText(this, "Error adding pet to DB", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Pet added", Toast.LENGTH_SHORT).show();
+        } */
+
 
     }
 
@@ -158,6 +163,7 @@ public class CatalogActivity extends AppCompatActivity {
             case R.id.action_insert_dummy_data:
                 insertPet();
                 displayDatabaseInfo();
+
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:

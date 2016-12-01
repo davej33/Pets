@@ -16,7 +16,7 @@
 package com.example.android.pets;
 
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +31,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.pets.data.PetContract.PetEntry;
-import com.example.android.pets.data.PetDbHelper;
 
 /**
  * Allows user to create a new pet or edit an existing one.
@@ -118,14 +117,10 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     private void insertPets() {
-        // instantiate helper object
-        PetDbHelper mDbHelper = new PetDbHelper(this);
-
-        // create db instance using dbHelper object
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         // extract info from UI
         String nameString = mNameEditText.getText().toString().trim();
+
         String breedString = mBreedEditText.getText().toString().trim();
         String weightString = mWeightEditText.getText().toString().trim();
         int weight = Integer.parseInt(weightString);
@@ -139,12 +134,12 @@ public class EditorActivity extends AppCompatActivity {
         values.put(PetEntry.COLUMN_PET_WEIGHT, weight);
 
         // insert row object into table
-        long insertVal = db.insert(PetEntry.TABLE_NAME, null, values);
+        Uri insertVal = getContentResolver().insert(PetEntry.CONTENT_URI, values);
 
-        if (insertVal > 0) {
-            Toast.makeText(this, "Pet saved with id: " + insertVal, Toast.LENGTH_SHORT).show();
-        } else {
+        if (insertVal == null) {
             Toast.makeText(this, "Error adding Pet", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Pet added" , Toast.LENGTH_SHORT).show();
         }
     }
 
